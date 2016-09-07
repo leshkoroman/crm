@@ -1,7 +1,7 @@
 <?php
+
 $params = array_merge(
-    require(__DIR__ . '/../../common/config/params.php'),    
-    require(__DIR__ . '/params.php')    
+        require(__DIR__ . '/../../common/config/params.php'), require(__DIR__ . '/params.php')
 );
 
 return [
@@ -12,6 +12,8 @@ return [
     'modules' => [],
     'components' => [
         'request' => [
+            'baseUrl' => '',
+            'cookieValidationKey' => 'IVa8BxziisDgOpHQCD3BZUED7IGQl1F0',
             'csrfParam' => '_csrf-backend',
         ],
         'user' => [
@@ -35,14 +37,14 @@ return [
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
-        /*
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
-            'rules' => [
-            ],
         ],
-        */
+        'assetManager' => [
+            'basePath' => '@webroot/assets',
+            'baseUrl' => '@web/assets'
+        ]
     ],
     'params' => $params,
 ];
