@@ -1,0 +1,34 @@
+<?php
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+namespace common\components;
+class MyCaptchaAction extends \yii\captcha\CaptchaAction {
+
+    /**
+     * Generates a new verification code.
+     * @return string the generated verification code
+     */
+    protected function generateVerifyCode() {
+        if ($this->minLength < 3)
+            $this->minLength = 3;
+        if ($this->maxLength > 20)
+            $this->maxLength = 20;
+        if ($this->minLength > $this->maxLength)
+            $this->maxLength = $this->minLength;
+        $length = rand($this->minLength, $this->maxLength);
+
+        // Тут указываем символы которые будут 
+        // выводится у нас на капче. 
+        $letters = '1234567890';
+        $code = '';
+        for ($i = 0; $i < $length;  ++$i) {
+            $code.=$letters[rand(0, strlen($letters) - 1)];
+        }
+        return $code;
+    }
+
+}
