@@ -14,5 +14,10 @@ return [
             'password' => '123roman123max',
             'charset' => 'utf8',
         ],
+            'request' => [
+            'enableCookieValidation' => true,
+            'enableCsrfValidation' => true,
+            'cookieValidationKey' => 'kktirjhjvfy',
+        ],
     ],
 ];
