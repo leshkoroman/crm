@@ -7,13 +7,7 @@ return [
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],
-        'db' => [
-            'class' => 'yii\db\Connection',
-            'dsn' => 'mysql:host=localhost;dbname=merapoisk_crm',
-            'username' => 'max',
-            'password' => '123roman123max',
-            'charset' => 'utf8',
-        ],
+        'db' => require(dirname(__FILE__).'/database.php'),
             'request' => [
             'enableCookieValidation' => true,
             'enableCsrfValidation' => true,
