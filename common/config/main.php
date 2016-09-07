@@ -7,11 +7,6 @@ return [
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],
-        'db' => require(dirname(__FILE__).'/database.php'),
-            'request' => [
-            'enableCookieValidation' => true,
-            'enableCsrfValidation' => true,
-            'cookieValidationKey' => 'kktirjhjvfy',
-        ],
+        'db' => require(dirname(__FILE__) . '/database.php'),        
     ],
 ];
