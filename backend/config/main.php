@@ -15,6 +15,8 @@ return [
             'baseUrl' => '',
             'cookieValidationKey' => 'IVa8BxziisDgOpHQCD3BZUED7IGQl1F0',
             'csrfParam' => '_csrf-backend',
+            'enableCookieValidation' => true,
+            'enableCsrfValidation' => true,
         ],
         'user' => [
             'identityClass' => 'common\models\User',

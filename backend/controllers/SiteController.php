@@ -15,6 +15,7 @@ use common\models\User;
  */
 class SiteController extends Controller {
 
+    public $layout = "main_1";
     /**
      * @inheritdoc
      */
@@ -66,13 +67,15 @@ class SiteController extends Controller {
     public function actions() {
         return [
             'error' => [
-                'class' => 'yii\web\ErrorAction',
+                'class' => 'yii\web\ErrorAction',                
+                'view' => '@yiister/gentelella/views/error',
             ],
             'captcha' => [
                 'class' => 'common\components\MyCaptchaAction',
                 'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,                
                 'maxLength'=>4,
                 'minLength'=>4,
+                'height'=>'35px',
             ],
         ];
     }
@@ -96,6 +99,7 @@ class SiteController extends Controller {
      * @return string
      */
     public function actionLogin() {
+        $this->layout = 'main_1';
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
         }
@@ -119,6 +123,14 @@ class SiteController extends Controller {
         Yii::$app->user->logout();
 
         return $this->goHome();
+    }
+    
+    public function beforeAction($action)
+    {
+        if ($action->id == 'error')
+            $this->layout = Yii::$app->user->isGuest?'main_1':'main';
+
+        return parent::beforeAction($action);
     }
 
 }
