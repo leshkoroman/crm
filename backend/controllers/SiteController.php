@@ -76,6 +76,7 @@ class SiteController extends Controller {
                 'maxLength'=>4,
                 'minLength'=>4,
                 'height'=>'35px',
+				'width'=>'90px',
             ],
         ];
     }
