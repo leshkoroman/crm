@@ -10,7 +10,7 @@ return [
     'controllerNamespace' => 'backend\controllers',
     'bootstrap' => ['log'],
     'modules' => [
-        //'gii' => 'yii\gii\Module', // need to remove
+        'gii' => 'yii\gii\Module', // need to remove
     ],
     'components' => [
         'request' => [

@@ -15,10 +15,10 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="user-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
-<?php // echo $this->render('_search', ['model' => $searchModel]);  ?>
+    <?php // echo $this->render('_search', ['model' => $searchModel]);  ?>
 
     <p>
-    <?= Html::a('Создать менеджера', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Создать менеджера', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
     <?php Pjax::begin(); ?>    <?=
     grid\GridView::widget([
@@ -41,7 +41,11 @@ $this->params['breadcrumbs'][] = $this->title;
                 'header' => 'Фото',
                 'format' => 'html',
                 'value' => function($searchModel) {
-                    return '<img style="width:40px; text-align:center;" src="' . $searchModel->main_photo . '">';
+                    if (isset($searchModel->main_photo) && $searchModel->main_photo) {
+                        return '<img style="width:40px; text-align:center;" src="' . $searchModel->main_photo . '">';
+                    } else {
+                        return '<img style="width:40px; text-align:center;" src="http://merapoisk.ru/img/noimage.png">';
+                    }
                 },
             ],
             ['class' => 'yii\grid\ActionColumn'],
