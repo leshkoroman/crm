@@ -33,8 +33,7 @@ class SiteController extends Controller {
                         'actions' => ['create'],
                         'allow' => true,
                         // Allow users, moderators and admins to create
-                        'roles' => [
-                            User::ROLE_USER,
+                        'roles' => [                            
                             User::ROLE_MANAGER,
                             User::ROLE_ADMIN
                         ],

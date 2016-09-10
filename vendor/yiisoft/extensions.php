@@ -3,15 +3,6 @@
 $vendorDir = dirname(__DIR__);
 
 return array (
-  'yiisoft/yii2-swiftmailer' => 
-  array (
-    'name' => 'yiisoft/yii2-swiftmailer',
-    'version' => '2.0.5.0',
-    'alias' => 
-    array (
-      '@yii/swiftmailer' => $vendorDir . '/yiisoft/yii2-swiftmailer',
-    ),
-  ),
   'yiisoft/yii2-codeception' => 
   array (
     'name' => 'yiisoft/yii2-codeception',
@@ -73,6 +64,42 @@ return array (
     'alias' => 
     array (
       '@yiister/gentelella' => $vendorDir . '/yiister/yii2-gentelella',
+    ),
+  ),
+  'yiisoft/yii2-swiftmailer' => 
+  array (
+    'name' => 'yiisoft/yii2-swiftmailer',
+    'version' => '2.0.6.0',
+    'alias' => 
+    array (
+      '@yii/swiftmailer' => $vendorDir . '/yiisoft/yii2-swiftmailer',
+    ),
+  ),
+  'kartik-v/yii2-krajee-base' => 
+  array (
+    'name' => 'kartik-v/yii2-krajee-base',
+    'version' => '1.8.7.0',
+    'alias' => 
+    array (
+      '@kartik/base' => $vendorDir . '/kartik-v/yii2-krajee-base',
+    ),
+  ),
+  'kartik-v/yii2-widget-fileinput' => 
+  array (
+    'name' => 'kartik-v/yii2-widget-fileinput',
+    'version' => '1.0.5.0',
+    'alias' => 
+    array (
+      '@kartik/file' => $vendorDir . '/kartik-v/yii2-widget-fileinput',
+    ),
+  ),
+  'yiisoft/yii2-imagine' => 
+  array (
+    'name' => 'yiisoft/yii2-imagine',
+    'version' => '2.0.4.0',
+    'alias' => 
+    array (
+      '@yii/imagine' => $vendorDir . '/yiisoft/yii2-imagine',
     ),
   ),
 );

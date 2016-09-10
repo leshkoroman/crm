@@ -63,7 +63,7 @@ $bundle = yiister\gentelella\assets\Asset::register($this);
                                         [
                                             "items" => [
                                                 ["label" => "Главная", "url" => "/", "icon" => "home"],
-                                                (Yii::$app->user->identity->role === "30") ? ["label" => "Менеджеры", "url" => ["site/layout"], "icon" => "files-o"] : [],
+                                                (Yii::$app->user->identity->role === "30") ? ["label" => "Менеджеры", "url" => ["/user"], "icon" => "files-o"] : [],
                                                 //["label" => "Агенты", "url" => ["site/error-page"], "icon" => "close"],
                                                 ["label" => "Агенты", "url" => ["site/error-page"], "icon" => "files-o"],
                                             /*

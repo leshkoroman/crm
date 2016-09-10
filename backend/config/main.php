@@ -9,7 +9,9 @@ return [
     'basePath' => dirname(__DIR__),
     'controllerNamespace' => 'backend\controllers',
     'bootstrap' => ['log'],
-    'modules' => [],
+    'modules' => [
+        //'gii' => 'yii\gii\Module', // need to remove
+    ],
     'components' => [
         'request' => [
             'baseUrl' => '',
