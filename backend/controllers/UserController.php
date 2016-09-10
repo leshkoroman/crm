@@ -32,7 +32,7 @@ class UserController extends Controller {
                 'ruleConfig' => [
                     'class' => AccessRule::className(),
                 ],
-                'only' => ['index', 'create', 'update', 'delete' ,'settings'],
+                'only' => ['index', 'create', 'update', 'delete', 'settings', 'viev', 'profile'],
                 'rules' => [
                     [
                         'actions' => [''],
@@ -45,7 +45,7 @@ class UserController extends Controller {
                         ],
                     ],
                     [
-                        'actions' => ['settings'],
+                        'actions' => ['settings', 'profile'],
                         'allow' => true,
                         // Allow moderators and admins to update
                         'roles' => [
@@ -54,7 +54,7 @@ class UserController extends Controller {
                         ],
                     ],
                     [
-                        'actions' => ['create', 'delete', 'index', 'view', 'update', 'fileUploadGeneral', 'settings'],
+                        'actions' => ['create', 'delete', 'index', 'view', 'update', 'fileUploadGeneral', 'settings', 'profile'],
                         'allow' => true,
                         // Allow admins to delete
                         'roles' => [
@@ -86,8 +86,24 @@ class UserController extends Controller {
      * @return mixed
      */
     public function actionView($id) {
+        $model = $this->findModel($id);
+        if ($model->role == "30" || Yii::$app->user->identity->role != 30) {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }        
         return $this->render('view', [
-                    'model' => $this->findModel($id),
+                    'model' => $model,
+        ]);
+    }
+
+    /**
+     * Displays a single User model.    
+     * @return mixed
+     */
+    public function actionProfile() {
+        $model = $this->findModel(\Yii::$app->user->identity->id);       
+        return $this->render('view', [
+                    'model' => $model,
+                    'profile'=>1,
         ]);
     }
 
@@ -118,8 +134,8 @@ class UserController extends Controller {
      */
     public function actionUpdate($id) {
         $model = $this->findModel($id);
-        if($model->role == "30"){
-           throw new NotFoundHttpException('The requested page does not exist.');
+        if ($model->role == "30") {
+            throw new NotFoundHttpException('The requested page does not exist.');
         }
         $photo = $model->main_photo;
         if ($model->load(Yii::$app->request->post())) {
@@ -135,15 +151,14 @@ class UserController extends Controller {
         }
     }
 
-    
-        /**
+    /**
      * Updates an existing User model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
      */
-    public function actionSettings() {        
-        $model = $this->findModel(\Yii::$app->user->identity->id);        
+    public function actionSettings() {
+        $model = $this->findModel(\Yii::$app->user->identity->id);
         $photo = $model->main_photo;
         if ($model->load(Yii::$app->request->post())) {
             $model->password_hash = Yii::$app->security->generatePasswordHash($model->password);
@@ -157,6 +172,7 @@ class UserController extends Controller {
             ]);
         }
     }
+
     /**
      * Deletes an existing User model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
@@ -214,7 +230,5 @@ class UserController extends Controller {
             return true;
         }
     }
-    
-    
 
 }
