@@ -22,6 +22,9 @@ use yii\web\IdentityInterface;
  * @property integer $updated_at
  * @property string $password write-only password
  * @property string $role
+ * @property string $name
+ * @property string $main_photo
+ * @property string $password
  */
 class User extends ActiveRecord implements IdentityInterface {
 
@@ -38,8 +41,7 @@ class User extends ActiveRecord implements IdentityInterface {
         return '{{%user}}';
     }
 
-
-
+    
     /**
      * @inheritdoc
      */
@@ -49,13 +51,50 @@ class User extends ActiveRecord implements IdentityInterface {
         ];
     }
 
+    public function scenarios() {
+        $scenarios = parent::scenarios();
+        $scenarios['photo'] = ['main_photo'];
+
+        return $scenarios;
+    }
+
     /**
      * @inheritdoc
      */
     public function rules() {
         return [
+            [['username', 'password', 'email'], 'required'],
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
+            ['role','default','value'=>self::ROLE_MANAGER],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
+            [['id', 'status', 'created_at', 'updated_at'], 'integer'],
+            [['username', 'password_hash', 'password_reset_token', 'email', 'role', 'name', 'main_photo', 'password'], 'string', 'max' => 255],
+            [['auth_key'], 'string', 'max' => 32],
+            [['username'], 'unique'],
+            [['email'], 'unique'],
+            ['email', 'email'],
+            [['password_reset_token'], 'unique'],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels() {
+        return [
+            'id' => 'ID',
+            'username' => 'Логин',
+            'auth_key' => 'Auth Key',
+            'password_hash' => 'Пароль хеш',
+            'password_reset_token' => 'Password Reset Token',
+            'email' => 'Email',
+            'status' => 'Status',
+            'created_at' => 'Создан',
+            'updated_at' => 'Обновлен',
+            'role' => 'Роль',
+            'name' => 'Имя',
+            'main_photo' => 'Фото',
+            'password' => 'Пароль'
         ];
     }
 
