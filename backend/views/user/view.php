@@ -48,7 +48,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'name',
             [
                 'attribute' => 'main_photo',
-                'value' => $model->main_photo,
+                'value' => (isset($model->main_photo)&&$model->main_photo)?$model->main_photo:'http://merapoisk.ru/img/noimage.png',
                 'format' => ['image', ['width' => '100', 'height' => '100']],
             ],
         ],

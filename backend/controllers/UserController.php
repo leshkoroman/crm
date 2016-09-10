@@ -15,6 +15,8 @@ use yii\web\UploadedFile;
 use Imagine\Image\Point;
 use yii\imagine\Image;
 use Imagine\Image\Box;
+use yii\web\Response;
+use yii\widgets\ActiveForm;
 
 /**
  * UserController implements the CRUD actions for User model.
@@ -32,7 +34,7 @@ class UserController extends Controller {
                 'ruleConfig' => [
                     'class' => AccessRule::className(),
                 ],
-                'only' => ['index', 'create', 'update', 'delete', 'settings', 'viev', 'profile'],
+                'only' => ['index', 'create', 'update', 'delete', 'settings', 'view', 'profile'],
                 'rules' => [
                     [
                         'actions' => [''],
@@ -89,7 +91,7 @@ class UserController extends Controller {
         $model = $this->findModel($id);
         if ($model->role == "30" || Yii::$app->user->identity->role != 30) {
             throw new NotFoundHttpException('The requested page does not exist.');
-        }        
+        }
         return $this->render('view', [
                     'model' => $model,
         ]);
@@ -100,10 +102,10 @@ class UserController extends Controller {
      * @return mixed
      */
     public function actionProfile() {
-        $model = $this->findModel(\Yii::$app->user->identity->id);       
+        $model = $this->findModel(\Yii::$app->user->identity->id);
         return $this->render('view', [
                     'model' => $model,
-                    'profile'=>1,
+                    'profile' => 1,
         ]);
     }
 
@@ -114,6 +116,14 @@ class UserController extends Controller {
      */
     public function actionCreate() {
         $model = new User();
+
+        if (Yii::$app->request->isAjax && \Yii::$app->request->isPost) {
+            if ($model->load(Yii::$app->request->post())) {                
+                \Yii::$app->response->format = Response::FORMAT_JSON;
+                return ActiveForm::validate($model);                
+            }
+        }
+       
         if ($model->load(Yii::$app->request->post())) {
             $model->password_hash = Yii::$app->security->generatePasswordHash($model->password);
             if ($model->save()) {
@@ -137,6 +147,13 @@ class UserController extends Controller {
         if ($model->role == "30") {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+        if (Yii::$app->request->isAjax && \Yii::$app->request->isPost) {
+            if ($model->load(Yii::$app->request->post())) {                
+                \Yii::$app->response->format = Response::FORMAT_JSON;
+                return ActiveForm::validate($model);                
+            }
+        }
+        
         $photo = $model->main_photo;
         if ($model->load(Yii::$app->request->post())) {
             $model->password_hash = Yii::$app->security->generatePasswordHash($model->password);
@@ -159,12 +176,18 @@ class UserController extends Controller {
      */
     public function actionSettings() {
         $model = $this->findModel(\Yii::$app->user->identity->id);
+        if (Yii::$app->request->isAjax && \Yii::$app->request->isPost) {
+            if ($model->load(Yii::$app->request->post())) {                
+                \Yii::$app->response->format = Response::FORMAT_JSON;
+                return ActiveForm::validate($model);                
+            }
+        }
         $photo = $model->main_photo;
         if ($model->load(Yii::$app->request->post())) {
             $model->password_hash = Yii::$app->security->generatePasswordHash($model->password);
             $model->main_photo = $photo;
             if ($model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+                return $this->redirect(['profile']);
             }
         } else {
             return $this->render('update', [
