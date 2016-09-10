@@ -17,7 +17,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <p>
-        <?= Html::a('Создать агента', ['create'], ['class' => 'btn btn-success']) ?>
+        <?php //echo Html::a('Создать агента', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
     <?php \yii\widgets\Pjax::begin(['id' => 'agents']); ?>
     <?=
