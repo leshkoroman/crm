@@ -50,7 +50,7 @@ class Sagent extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id_user', 'phone', 'email', 'domain', 'type_name', 'agent_header', 'phone_2', 'g_link', 'v_link', 't_link', 'f_link'], 'required'],
+            [['id_user',], 'required'],
             [['id_user', 'status'], 'integer'],
             [['agent_info'], 'string'],
             [['date_add'], 'safe'],
@@ -73,21 +73,21 @@ class Sagent extends \yii\db\ActiveRecord
             'id' => 'ID',
             'id_user' => 'Id User',
             'phone' => 'Phone',
-            'email' => 'Email',
-            'domain' => 'Domain',
+            'email' => 'Email (для заявок)',
+            'domain' => 'домен',
             'type_name' => 'Type Name',
-            'agent_info' => 'Agent Info',
+            'agent_info' => 'Скрипты, метрика...',
             'vk_app_id' => 'Vk App ID',
             'date_add' => 'Date Add',
             'agent_header' => 'Agent Header',
             'phone_2' => 'Phone 2',
-            'status' => 'Status',
-            'site_header1' => 'Site Header1',
-            'site_header2' => 'Site Header2',
-            'g_link' => 'G Link',
-            'v_link' => 'V Link',
-            't_link' => 'T Link',
-            'f_link' => 'F Link',
+            'status' => 'Статус',
+            'site_header1' => 'Оглавления 1',
+            'site_header2' => 'Оглавления 2',
+            'g_link' => 'Google',
+            'v_link' => 'VK',
+            't_link' => 'Tvitter',
+            'f_link' => 'Facebook',
         ];
     }
 

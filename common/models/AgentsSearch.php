@@ -54,7 +54,9 @@ class AgentsSearch extends Agents {
 
 
         // add conditions that should always apply here
-
+        if (!isset($_GET['sort'])) {
+            $query = $query->orderBy('users.id desc');
+        }
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
@@ -134,14 +136,14 @@ class AgentsSearch extends Agents {
                 }]);
         }
         if (isset($_GET['AgentsSearch']['domain']) && $_GET['AgentsSearch']['domain']) {
-            if ($_GET['AgentsSearch']['domain'] != 'все') {                
+            if ($_GET['AgentsSearch']['domain'] != 'все') {
                 $_SESSION['domain_search'] = trim(strip_tags($_GET['AgentsSearch']['domain']));
                 $query->joinWith(['meraDomains' => function ($q) {
                         $q->where('mera_domains.domain_name = "' . $_SESSION['domain_search'] . '"');
                     }]);
             }
         }
-        
+
         return $dataProvider;
     }
 

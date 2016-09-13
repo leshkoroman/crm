@@ -42,7 +42,7 @@ class MeraUsersAccessControl extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['id_system', 'id_user', 'firstname', 'surname', 'middlename', 'phone_1', 'phone_2', 'phone_3', 'date_end_object', 'date_end_calls'], 'required'],
+            [['id_system', 'id_user'], 'required'],
             [['id_system', 'id_user', 'date_end_object', 'date_end_calls'], 'integer'],
             [['date_begin'], 'safe'],
             [['firstname', 'surname', 'middlename'], 'string', 'max' => 50],
@@ -81,6 +81,14 @@ class MeraUsersAccessControl extends \yii\db\ActiveRecord {
      */
     public static function find() {
         return new MeraUsersAccessControlQuery(get_called_class());
+    }
+    
+    public function beforeValidate() {
+        parent::beforeValidate();
+        $this->date_end_object = (int)strtotime($this->date_end_object);
+        $this->date_end_calls = (int)strtotime($this->date_end_calls);
+        $this->date_end_client = (int)strtotime($this->date_end_client);
+        return TRUE;
     }
 
 }

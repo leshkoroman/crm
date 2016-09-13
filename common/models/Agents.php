@@ -33,7 +33,6 @@ use Yii;
  * @property string $mail_service_type
  * @property integer $notify_module
  * @property integer $id_domain
- * @property integer $xml_feed_time_to
  * @property integer $xml_feed_on_off
  * @property integer $xml_feed_max
  * @property string $vk_login
@@ -52,16 +51,16 @@ class Agents extends \yii\db\ActiveRecord {
         return 'users';
     }
 
-    public function getMeraOnOff(){
-        if($this->meraUsersAccessControl->date_end_object > time() && $this->objects_rent_module == 1){
+    public function getMeraOnOff() {
+        if ($this->meraUsersAccessControl->date_end_object > time() && $this->objects_rent_module == 1) {
             return 'вкл';
-        }else{
+        } else {
             return 'выкл.';
         }
     }
 
-    public function getSpy() {        
-        return ($this->spyStatistics->date)?$this->spyStatistics->date:'не входил';
+    public function getSpy() {
+        return ($this->spyStatistics->date) ? $this->spyStatistics->date : 'не входил';
     }
 
     public function getData_to() {
@@ -84,17 +83,29 @@ class Agents extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['username', 'id_sex', 'surname', 'name', 'patronymic', 'phone', 'email', 'password', 'hash', 'id_type', 'online', 'last_computer_info', 'count_times_view_objects', 'count_times_view_objects_archive', 'calls_module', 'objects_rent_phones', 'mail_service_email', 'mail_service_password', 'mail_service_type', 'id_domain', 'xml_feed_time_to', 'xml_feed_on_off', 'xml_feed_max', 'vk_login', 'vk_password', 'ap_login', 'ap_password', 'who_created'], 'required'],
-            [['id_sex', 'id_type', 'online', 'objects_rent_limit_phones_daily', 'objects_rent_limit_phones_daily_archive', 'objects_rent_module', 'calls_module', 'notify_module', 'id_domain', 'xml_feed_time_to', 'xml_feed_on_off', 'xml_feed_max', 'xml_feed_count_max', 'who_created'], 'integer'],
+            [['name', 'xml_feed_on_off', 'xml_feed_max', 'who_created'], 'required'],
+            [['id_sex', 'id_type', 'online', 'objects_rent_limit_phones_daily', 'objects_rent_limit_phones_daily_archive', 'objects_rent_module', 'calls_module', 'notify_module', 'id_domain', 'xml_feed_on_off', 'xml_feed_max', 'xml_feed_count_max', 'who_created'], 'integer'],
             [['date_add'], 'safe'],
             [['objects_rent_phones'], 'string'],
             [['username', 'surname', 'name', 'patronymic', 'phone'], 'string', 'max' => 50],
             [['email', 'password', 'count_times_view_objects', 'count_times_view_objects_archive', 'mail_service_type'], 'string', 'max' => 100],
+            ['email', 'email'],
             [['hash'], 'string', 'max' => 32],
             [['last_computer_info'], 'string', 'max' => 2000],
             [['mail_service_email', 'mail_service_password'], 'string', 'max' => 150],
             [['vk_login', 'vk_password'], 'string', 'max' => 250],
             [['ap_login', 'ap_password'], 'string', 'max' => 255],
+            ['mail_service_type', 'in', 'range' => ['yandex', 'gmail', 'mail.ru']],
+            ['who_created', 'default', 'value' => ($this->isNewRecord) ? Yii::$app->user->identity->id : $this->who_created],
+            ['xml_feed_on_off', 'default', 'value' => 0],
+            ['objects_rent_module', 'default', 'value' => 0],
+            ['password', 'default', 'value' => ($this->isNewRecord) ? date('d',time()).date('m',time()).date('Y',time()).date('H',time()).date('i',time()).date('s',time()) : $this->password],
+            ['objects_rent_limit_phones_daily', 'default', 'value' => ($this->isNewRecord) ? 90 : $this->objects_rent_limit_phones_daily],
+            ['objects_rent_limit_phones_daily_archive', 'default', 'value' => ($this->isNewRecord) ? 300 : $this->objects_rent_limit_phones_daily_archive],
+            ['xml_feed_count_max', 'default', 'value' => ($this->isNewRecord) ? 500 : $this->xml_feed_count_max],
+            ['calls_module', 'default', 'value' => ($this->isNewRecord) ? 1 : $this->calls_module],
+            ['id_type', 'default', 'value' => ($this->isNewRecord) ? 1 : $this->id_type],
+            
         ];
     }
 
@@ -136,7 +147,7 @@ class Agents extends \yii\db\ActiveRecord {
             'mail_service_type' => 'Почтовий сервис',
             'notify_module' => 'Модуль оповещений',
             'id_domain' => 'Домен',
-            'xml_feed_time_to' => 'Доспуп к фидам до',
+            //'xml_feed_time_to' => 'Доспуп к фидам до', //// не используем
             'xml_feed_on_off' => 'Фиды вкл./выкл.',
             'xml_feed_max' => 'Количество фидов',
             'vk_login' => 'ВК Логин',
@@ -146,8 +157,8 @@ class Agents extends \yii\db\ActiveRecord {
             'ap_password' => 'АП Пароль',
             'who_created' => 'Менеджер',
             'data_to' => 'дата до',
-            'spy'=>'дата входа',
-            'meraOnOff'=>'вкл./выкл.'
+            'spy' => 'дата входа',
+            'meraOnOff' => 'вкл./выкл.'
         ];
     }
 
