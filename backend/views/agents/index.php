@@ -102,7 +102,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     // 'ap_login',
                     // 'ap_password',
                     ['class' => 'yii\grid\ActionColumn',
-                        'template' => '{update}{delete}',
+                        'template' => '{update}',
                     ],
         ],
     ]);
