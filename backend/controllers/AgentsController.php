@@ -11,6 +11,10 @@ use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use common\components\AccessRule;
 use common\models\User;
+use common\models\TarifOrder;
+use common\models\MeraTarif;
+use common\models\MeraUsersAccessControl;
+use common\models\Sagent;
 
 /**
  * AgentsController implements the CRUD actions for Agents model.
@@ -78,15 +82,7 @@ class AgentsController extends Controller {
      * @return mixed
      */
     public function actionView($id) {
-        $UserInfo = Yii::$app->user->identity;
-        $model = $this->findModel($id);
-        if ($model->who_created == $UserInfo->id || $UserInfo->role == "30") {
-            return $this->render('view', [
-                        'model' => $model,
-            ]);
-        } else {
-            return $this->redirect(['/agents']);
-        }
+        return $this->redirect(['/agents']);
     }
 
     /**
@@ -95,13 +91,85 @@ class AgentsController extends Controller {
      * @return mixed
      */
     public function actionCreate() {
+        $st = true;
         $model = new Agents();
+        $last_id = Agents::find()
+                ->orderBy('id desc')
+                ->one();
+        $new_id = $last_id->id + 1;
+        $model->username = $new_id;
+        $model->password = date('d', time()) . date('m', time()) . date('Y', time()) . date('H', time()) . date('i', time()) . date('s', time());
+        $model->objects_rent_limit_phones_daily = 90;
+        $model->objects_rent_limit_phones_daily_archive = 300;
+        $model->xml_feed_count_max = 500;
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+
+        $tarifOrderR = new TarifOrder;
+        $tarif = MeraTarif::find()
+                ->where(['on_off' => 1])
+                ->all();
+        //mera
+        $MeraUsersAccessControl = new MeraUsersAccessControl;
+        $MeraUsersAccessControl->id_system = 1;
+        $MeraUsersAccessControl->date_end_object = time() + 24 * 3 * 60 * 60;
+
+        //vitrina        
+        $MeraUsersAccessControl2 = new MeraUsersAccessControl;
+        $MeraUsersAccessControl2->id_system = 2;
+        $Sagent = new Sagent;
+
+        if ($model->load(Yii::$app->request->post()) && $MeraUsersAccessControl->load(Yii::$app->request->post()) && $MeraUsersAccessControl->load(Yii::$app->request->post()) && $MeraUsersAccessControl2->load(Yii::$app->request->post()) && $Sagent->load(Yii::$app->request->post())) {
+            $model->who_created = Yii::$app->user->identity->id;
+            $model->calls_module = 1;
+            $model->id_type = 1;
+            $model->xml_feed_max = 1000;
+            if ($model->validate()) {
+                if (!isset($model->username) || !$model->username) {
+                    $model->username = $new_id;
+                }
+                $model->who_created = Yii::$app->user->identity->id;
+                $model->calls_module = 1;
+                $model->id_type = 1;
+                $model->xml_feed_max = 1000;
+                $model->save(false);
+                $MeraUsersAccessControl->id_user = $model->id;
+                $MeraUsersAccessControl2->id_user = $model->id;
+                $Sagent->id_user = $model->id;
+                if ($MeraUsersAccessControl->validate() && $MeraUsersAccessControl2->validate() && $Sagent->validate()) {
+                    $MeraUsersAccessControl->save(false);
+                    $MeraUsersAccessControl2->save(false);
+                    $Sagent->save(false);
+                    return $this->redirect(['/agents']);
+                } else {
+                    $st = false;
+                }
+            } else {
+                $st = false;
+            }
+//            echo '<pre>';
+//            var_dump($model->getErrors());
+//            var_dump($MeraUsersAccessControl->getErrors());
+//            var_dump($MeraUsersAccessControl2->getErrors());
+//            var_dump($Sagent->getErrors());
+//            exit;
         } else {
             return $this->render('create', [
                         'model' => $model,
+                        'tarif' => $tarif,
+                        'tarifOrder' => $tarifOrder,
+                        'MeraUsersAccessControl' => $MeraUsersAccessControl,
+                        'MeraUsersAccessControl2' => $MeraUsersAccessControl2,
+                        'Sagent' => $Sagent,
+            ]);
+        }
+        if (!$st) {
+            return $this->render('create', [
+                        'model' => $model,
+                        'tarif' => $tarif,
+                        'tarifOrder' => $tarifOrder,
+                        'MeraUsersAccessControl' => $MeraUsersAccessControl,
+                        'MeraUsersAccessControl2' => $MeraUsersAccessControl2,
+                        'Sagent' => $Sagent,
             ]);
         }
     }
@@ -116,11 +184,74 @@ class AgentsController extends Controller {
         $model = $this->findModel($id);
         $UserInfo = Yii::$app->user->identity;
         if ($model->who_created == $UserInfo->id || $UserInfo->role == "30") {
-            if ($model->load(Yii::$app->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+
+            //tarifs
+            $tarifOrderR = TarifOrder::find()
+                    ->where(['id_user' => $id])
+                    ->andWhere(['not in', 'status', [1, 4]])
+                    ->orderBy('data_answer desc')
+                    ->all();
+            $tarif = MeraTarif::find()
+                    ->where(['on_off' => 1])
+                    ->all();
+            if (count($tarifOrderR)) {
+                foreach ($tarifOrderR as $t) {
+                    $t_id = $t->id;
+                    break;
+                }
+                $tarifOrder = TarifOrder::findOne($t_id);
+            } else {
+                $tarifOrder = new TarifOrder;
+            }
+
+            //mera
+            $MeraUsersAccessControl = MeraUsersAccessControl::find()
+                    ->where(['id_user' => $model->id])
+                    ->andWhere(['id_system' => 1])
+                    ->one();
+            if (!$MeraUsersAccessControl->id) {
+                $MeraUsersAccessControl = new MeraUsersAccessControl;
+            }
+
+            //vitrina
+            $MeraUsersAccessControl2 = MeraUsersAccessControl::find()
+                    ->where(['id_user' => $model->id])
+                    ->andWhere(['id_system' => 2])
+                    ->one();
+            if (!$MeraUsersAccessControl2->id) {
+                $MeraUsersAccessControl2 = new MeraUsersAccessControl;
+            }
+            $Sagent = Sagent::find()
+                    ->where(['id_user' => $model->id])
+                    ->one();
+            if (!$Sagent->id)
+                $Sagent = new Sagent;
+
+
+            if ($model->load(Yii::$app->request->post()) && $MeraUsersAccessControl->load(Yii::$app->request->post()) && $MeraUsersAccessControl->load(Yii::$app->request->post()) && $MeraUsersAccessControl2->load(Yii::$app->request->post()) && $Sagent->load(Yii::$app->request->post())) {
+
+                if ($model->validate() && $MeraUsersAccessControl->validate() && $MeraUsersAccessControl2->validate() && $Sagent->validate()) {
+                    $model->save();
+                    $MeraUsersAccessControl->save(false);
+                    $MeraUsersAccessControl2->save(false);
+                    $Sagent->save();
+                }
+
+//                echo '<pre>';
+//                var_dump($model->getErrors());
+//                var_dump($MeraUsersAccessControl->toArray());
+//                var_dump($MeraUsersAccessControl2->toArray());
+//                var_dump($Sagent->toArray());
+//                exit;
+                return $this->redirect(['/agents']);
             } else {
                 return $this->render('update', [
                             'model' => $model,
+                            'tarif' => $tarif,
+                            'tarifOrder' => $tarifOrder,
+                            'MeraUsersAccessControl' => $MeraUsersAccessControl,
+                            'MeraUsersAccessControl2' => $MeraUsersAccessControl2,
+                            'Sagent' => $Sagent,
                 ]);
             }
         } else {

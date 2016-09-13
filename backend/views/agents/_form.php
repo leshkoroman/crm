@@ -1,99 +1,88 @@
 <?php
 
+use \yiister\gentelella\widgets\Panel;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use yii\helpers\ArrayHelper;
+use common\models\MeraDomains;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Agents */
 /* @var $form yii\widgets\ActiveForm */
 ?>
-
 <div class="agents-form">
-
     <?php $form = ActiveForm::begin(); ?>
+    <div class="row">
+        <?php
+        Panel::begin([
+            'header' => 'Личные данные',
+        ])
+        ?>
+        <div class="col-md-4 col-xs-12">
+            <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>   
+            <?=
+            $form->field($model, 'phone')->textInput(['maxlength' => true])->widget(\yii\widgets\MaskedInput::className(), [
+                'mask' => '999-999-9999',
+            ])
+            ?>
+        </div>
+        <div class="col-md-4 col-xs-12">
+            <?php echo $form->field($model, 'surname')->textInput(['maxlength' => true]) ?>
+            <?php
+            $tt = ArrayHelper::map(MeraDomains::find()->all(), 'id', 'domain_name');
+            $tt[0] = 'ВСЕ';
+            ksort($tt);
+            ?>
+            <?= $form->field($model, 'id_domain')->dropDownList($tt) ?>
+        </div>
+        <div class="col-md-4 col-xs-12">
+            <?= $form->field($model, 'patronymic')->textInput(['maxlength' => true]) ?>
+        </div>
+        <div class="col-md-4 col-xs-12">
+            <?= $form->field($model, 'date_add')->textInput(['disabled' => true]) ?>
+        </div>
+        <?php Panel::end() ?>
+    </div>
 
-    <?= $form->field($model, 'username')->textInput(['maxlength' => true]) ?>
+    <div class="row" style='border:solid; margin-bottom:10px;'>
+        <?php
+        Panel::begin([
+            'header' => 'Тариф',
+            'options' => ['style' => 'padding-bottom: 50px;'],
+        ])
+        ?>
 
-    <?= $form->field($model, 'id_sex')->textInput() ?>
+        <?php if (!$model->isNewRecord): ?>
+            <?php echo $form->field($tarifOrder, 'id_tarif')->dropDownList(ArrayHelper::map($tarif, 'id', 'name'), ['prompt' => 'Выбрать', 'id' => 'id_user_m', 'data-id' => $model->id])->label(false) ?>
+        <?php endif; ?>
 
-    <?= $form->field($model, 'surname')->textInput(['maxlength' => true]) ?>
+        <?php Panel::end() ?>
+    </div>
 
-    <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'patronymic')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'phone')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'password')->passwordInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'hash')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'id_type')->textInput() ?>
-
-    <?= $form->field($model, 'date_add')->textInput() ?>
-
-    <?= $form->field($model, 'access')->textarea(['rows' => 6]) ?>
-
-    <?= $form->field($model, 'online')->textInput() ?>
-
-    <?= $form->field($model, 'last_computer_info')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'count_times_view_clients')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'clients_rent_limit_phones_daily')->textInput() ?>
-
-    <?= $form->field($model, 'clients_rent_module')->textInput() ?>
-
-    <?= $form->field($model, 'clients_rent_phones')->textarea(['rows' => 6]) ?>
-
-    <?= $form->field($model, 'count_times_view_objects')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'objects_rent_limit_phones_daily')->textInput() ?>
-
-    <?= $form->field($model, 'count_times_view_objects_archive')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'objects_rent_limit_phones_daily_archive')->textInput() ?>
-
-    <?= $form->field($model, 'objects_rent_module')->textInput() ?>
-
-    <?= $form->field($model, 'count_times_view_objects_sale')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'objects_sale_limit_phones_daily')->textInput() ?>
-
-    <?= $form->field($model, 'calls_module')->textInput() ?>
-
-    <?= $form->field($model, 'objects_rent_phones')->textarea(['rows' => 6]) ?>
-
-    <?= $form->field($model, 'mail_service_email')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'mail_service_password')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'mail_service_type')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'notify_module')->textInput() ?>
-
-    <?= $form->field($model, 'id_domain')->textInput() ?>
-
-    <?= $form->field($model, 'xml_feed_time_to')->textInput() ?>
-
-    <?= $form->field($model, 'xml_feed_on_off')->textInput() ?>
-
-    <?= $form->field($model, 'xml_feed_max')->textInput() ?>
-
-    <?= $form->field($model, 'vk_login')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'vk_password')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'xml_feed_count_max')->textInput() ?>
-
-    <?= $form->field($model, 'ap_login')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'ap_password')->textInput(['maxlength' => true]) ?>
+    <?php
+    echo \yii\bootstrap\Tabs::widget([
+        'items' => [
+            [
+                'label' => 'Мерапоиск',
+                'content' => $this->render('tabs/_mera', ['model' => $model, 'form' => $form, 'MeraUsersAccessControl' => $MeraUsersAccessControl,]),
+                'active' => true
+            ],
+            [
+                'label' => 'Витрина',
+                'content' => $this->render('tabs/_vitrina', [
+                    'model' => $model,
+                    'form' => $form,
+                    'MeraUsersAccessControl' => $MeraUsersAccessControl,
+                    'MeraUsersAccessControl2' => $MeraUsersAccessControl2,
+                    'Sagent' => $Sagent,
+                ]),
+            ],
+        ],
+    ]);
+    ?>
 
     <div class="form-group">
-        <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+        <?= Html::submitButton($model->isNewRecord ? 'Создать' : 'Изменить', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>
