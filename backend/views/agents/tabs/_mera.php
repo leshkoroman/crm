@@ -1,6 +1,7 @@
 <?php
 
 use \yiister\gentelella\widgets\Panel;
+use kartik\date\DatePickerAsset;
 use kartik\date\DatePicker;
 ?>
 <div class="row">
