@@ -19,23 +19,22 @@ $this->params['breadcrumbs'][] = $this->title;
     <p>
         <?php echo Html::a('Создать агента', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
-    <?php \yii\widgets\Pjax::begin(['id' => 'agents']); ?>
+    <?php \yii\widgets\Pjax::begin(); ?>
     <?=
     GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
+            // ['class' => 'yii\grid\SerialColumn'],
             [
                 'attribute' => 'id',
                 'contentOptions' => ['style' => 'width:100px;'],
             ],
-            
+            'name:ntext',
             [
                 'attribute' => 'data_to',
                 'contentOptions' => ['style' => 'text-align:center;width:200px;'],
             ],
-            
             [
                 'attribute' => 'spy',
                 'contentOptions' => function($data) {
@@ -45,26 +44,24 @@ $this->params['breadcrumbs'][] = $this->title;
                         return ['style' => 'color:green'];
                     }
                 }
-            ],
-                    
-            [
-                'attribute' => 'domain',
-                'contentOptions' => ['style' => 'text-align:left;width:150px;'],
-            ],
-            [
-                'attribute' => 'meraOnOff',
-                'contentOptions' => function($data) {
-                    if ($data->meraOnOff == 'вкл') {
-                        return ['style' => 'color:green'];
-                    } else {
-                        return ['style' => 'color:red'];
-                    }
-                }
-            ],
+                    ],
+//            [
+//                'attribute' => 'domain',
+//                'contentOptions' => ['style' => 'text-align:left;width:150px;'],
+//            ],
+//            [
+//                'attribute' => 'meraOnOff',
+//                'contentOptions' => function($data) {
+//                    if ($data->meraOnOff == 'вкл') {
+//                        return ['style' => 'color:green'];
+//                    } else {
+//                        return ['style' => 'color:red'];
+//                    }
+//                }
+//            ],
                     //'username',
                     //'id_sex',
-                    //'surname',
-                    'name:ntext',
+                    //'surname',                   
                     // 'patronymic',
                     // 'phone',
                     // 'email:email',
@@ -100,13 +97,25 @@ $this->params['breadcrumbs'][] = $this->title;
                     // 'vk_password',
                     // 'xml_feed_count_max',
                     // 'ap_login',
-                    // 'ap_password',
-                    ['class' => 'yii\grid\ActionColumn',
-                        'template' => '{update} ',
+                    // 'ap_password',                    
+                    [
+                        //'attribute' => 'user.name',
+                        'label' => 'менеджер',
+                        'format' => 'html',
+                        'value' => function($data) {
+                            if(Yii::$app->user->identity->id == $data->who_created){
+                                return 'я';
+                            }else{
+                                return $data->user->name;
+                            }
+                        }
                     ],
-        ],
-    ]);
-    ?>
-    <?php \yii\widgets\Pjax::end(); ?>
+                    ['class' => 'yii\grid\ActionColumn',
+                        'template' => '{update}{delete}',
+                    ],
+                ],
+            ]);
+            ?>
+        <?php \yii\widgets\Pjax::end(); ?>
 </div>
 

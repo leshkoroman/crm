@@ -268,7 +268,10 @@ class AgentsController extends Controller {
     public function actionDelete($id) {
         $UserInfo = Yii::$app->user->identity;
         if ($model->who_created == $UserInfo->id || $UserInfo->role == "30") {
-            $this->findModel($id)->delete();
+            $model = $this->findModel($id);
+            MeraUsersAccessControl::deleteAll(['id_user' => $model->id]);                    
+            Sagent::deleteAll(['id_user' => $model->id]);
+            $model->delete();
         }
         return $this->redirect(['index']);
     }
