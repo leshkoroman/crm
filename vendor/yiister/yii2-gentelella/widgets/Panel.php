@@ -104,6 +104,7 @@ class Panel extends Widget
                         'items' => $this->tools,
                         'options' => [
                             'class' => 'nav navbar-right panel_toolbox',
+                            'style' => 'min-width:0px;',
                         ],
                     ]
                 );

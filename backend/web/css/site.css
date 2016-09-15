@@ -117,3 +117,17 @@ a.desc:after {
 .login-block{
     border: 1px solid #ddd; padding: 5px; background: #f5f5f5
 }
+
+.my-bs-glyphicons-list li{
+    height: 40px;
+    padding: 0px;
+    width: 6.5%;
+    cursor: pointer;
+    border: 1px solid #dbdedf;
+    border-bottom-width: 2px;
+    border-radius: 3px;
+}
+
+.my-panel-heder{
+    
+}

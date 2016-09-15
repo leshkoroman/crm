@@ -5,69 +5,46 @@ use kartik\date\DatePickerAsset;
 use kartik\date\DatePicker;
 ?>
 <div class="row">
+    <?php
+    Panel::begin([
+        'header' => 'Пароли',
+        'expandable' => true,
+        'id'=>'pasw',
+    ])
+    ?>
+    <div class="col-md-12 col-xs-12">
 
-    <div class="col-md-4 col-xs-12">
         <?= $form->field($model, 'username')->textInput(['maxlength' => true]) ?>
-    </div>
-    <div class="col-md-4 col-xs-12">
+
         <?= $form->field($model, 'password')->textInput(['maxlength' => true]) ?>
-    </div>
-    <div class="col-md-4 col-xs-12">
 
-    </div>
-</div>
-<div class="row">
 
-    <div class="col-md-4 col-xs-12">
         <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
-    </div>
-    <div class="col-md-4 col-xs-12">
         <?= $form->field($model, 'mail_service_password')->textInput(['maxlength' => true]) ?>
-    </div>
-    <div class="col-md-4 col-xs-12">
+
         <?= $form->field($model, 'mail_service_type')->dropDownList(['yandex' => 'yandex', 'gmail' => 'gmail', 'mail.ru' => 'mail.ru']) ?>
-    </div>
-</div>
-<div class="row">
-
-    <div class="col-md-4 col-xs-12">
         <?= $form->field($model, 'vk_login')->textInput(['maxlength' => true]) ?>
-    </div>
-    <div class="col-md-4 col-xs-12">
         <?= $form->field($model, 'vk_password')->textInput(['maxlength' => true]) ?>
-    </div>
-    <div class="col-md-4 col-xs-12">
-
-    </div>
-</div>
-<div class="row">
-
-    <div class="col-md-4 col-xs-12">
         <?= $form->field($model, 'ap_login')->textInput(['maxlength' => true]) ?>
-    </div>
-    <div class="col-md-4 col-xs-12">
         <?= $form->field($model, 'ap_password')->textInput(['maxlength' => true]) ?>
-    </div>
-    <div class="col-md-4 col-xs-12">
+
 
     </div>
+    <?php Panel::end() ?>
 </div>
 <div class="row">
     <?php
     Panel::begin([
         'header' => 'Модуль "АРЕНДА"',
+        'expandable' => true,
     ])
     ?>
-    <div class="col-md-2 col-xs-12">
+    <div class="col-md-12 col-xs-12">
         <?= $form->field($model, 'objects_rent_module')->dropDownList([0 => 'Выкл.', 1 => 'Вкл.']) ?>
-    </div>
-    <div class="col-md-3 col-xs-12">
+    
         <?= $form->field($model, 'objects_rent_limit_phones_daily')->textInput() ?>
-    </div>
-    <div class="col-md-3 col-xs-12">
-        <?= $form->field($model, 'objects_rent_limit_phones_daily_archive')->textInput() ?>
-    </div>
-    <div class="col-md-4 col-xs-12">
+    
+        <?= $form->field($model, 'objects_rent_limit_phones_daily_archive')->textInput() ?>    
         <?php
         if (isset($MeraUsersAccessControl->date_end_object) && $MeraUsersAccessControl->date_end_object) {
             $vall = date("d.m.Y", $MeraUsersAccessControl->date_end_object);
@@ -93,16 +70,13 @@ use kartik\date\DatePicker;
     <?php
     Panel::begin([
         'header' => 'Модуль "XML"',
+        'expandable' => true,
     ])
     ?>
-    <div class="col-md-2 col-xs-12">
+    <div class="col-md-12 col-xs-12">
         <?= $form->field($model, 'xml_feed_on_off')->dropDownList([0 => 'Выкл.', 1 => 'Вкл.']) ?>
-    </div>
-    <div class="col-md-4 col-xs-12">
-        <?= $form->field($model, 'xml_feed_count_max')->textInput() ?>
-    </div>
-    <div class="col-md-3 col-xs-12">
-
+    
+        <?= $form->field($model, 'xml_feed_count_max')->textInput() ?>    
     </div>
     <?php Panel::end() ?>
 </div>
