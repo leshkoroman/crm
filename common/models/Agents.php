@@ -52,7 +52,7 @@ class Agents extends \yii\db\ActiveRecord {
     }
 
     public function getMeraOnOff() {
-        if ($this->meraUsersAccessControl->date_end_object > time() && $this->objects_rent_module == 1) {
+        if (isset($this->meraUsersAccessControl->date_end_object) && $this->meraUsersAccessControl->date_end_object > time() && $this->objects_rent_module == 1) {
             return 'вкл';
         } else {
             return 'выкл.';
@@ -60,7 +60,7 @@ class Agents extends \yii\db\ActiveRecord {
     }
 
     public function getSpy() {
-        return ($this->spyStatistics->date) ? $this->spyStatistics->date : 'не входил';
+        return (isset($this->spyStatistics->date) && $this->spyStatistics->date) ? $this->spyStatistics->date : 'не входил';
     }
 
     public function getData_to() {
@@ -68,7 +68,7 @@ class Agents extends \yii\db\ActiveRecord {
     }
 
     public function getDomain() {
-        return ($this->meraDomains->domain_name) ? $this->meraDomains->domain_name : 'все';
+        return (isset($this->meraDomains->domain_name) && $this->meraDomains->domain_name) ? $this->meraDomains->domain_name : 'все';
     }
 
     /**
@@ -99,13 +99,12 @@ class Agents extends \yii\db\ActiveRecord {
             ['who_created', 'default', 'value' => ($this->isNewRecord) ? Yii::$app->user->identity->id : $this->who_created],
             ['xml_feed_on_off', 'default', 'value' => 0],
             ['objects_rent_module', 'default', 'value' => 0],
-            ['password', 'default', 'value' => ($this->isNewRecord) ? date('d',time()).date('m',time()).date('Y',time()).date('H',time()).date('i',time()).date('s',time()) : $this->password],
+            ['password', 'default', 'value' => ($this->isNewRecord) ? date('d', time()) . date('m', time()) . date('Y', time()) . date('H', time()) . date('i', time()) . date('s', time()) : $this->password],
             ['objects_rent_limit_phones_daily', 'default', 'value' => ($this->isNewRecord) ? 90 : $this->objects_rent_limit_phones_daily],
             ['objects_rent_limit_phones_daily_archive', 'default', 'value' => ($this->isNewRecord) ? 300 : $this->objects_rent_limit_phones_daily_archive],
             ['xml_feed_count_max', 'default', 'value' => ($this->isNewRecord) ? 500 : $this->xml_feed_count_max],
             ['calls_module', 'default', 'value' => ($this->isNewRecord) ? 1 : $this->calls_module],
             ['id_type', 'default', 'value' => ($this->isNewRecord) ? 1 : $this->id_type],
-            
         ];
     }
 

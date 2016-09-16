@@ -149,3 +149,7 @@ a.desc:after {
 .comment{
     display: none;
 }
+
+.my_comments_task{
+    padding-left: 15px;
+}

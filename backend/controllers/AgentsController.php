@@ -30,7 +30,7 @@ class AgentsController extends Controller {
                 'ruleConfig' => [
                     'class' => AccessRule::className(),
                 ],
-                'only' => ['index', 'create', 'update', 'delete', 'view', 'comment'],
+                'only' => ['index', 'create', 'update', 'delete', 'view', 'comment', 'delcomment'],
                 'rules' => [
                     [
                         'actions' => ['index', 'create', 'update', 'comment'],
@@ -42,7 +42,7 @@ class AgentsController extends Controller {
                         ],
                     ],
                     [
-                        'actions' => ['index', 'create', 'update', 'delete', 'view'],
+                        'actions' => ['index', 'create', 'update', 'delete', 'view', 'comment', 'delcomment'],
                         'allow' => true,
                         // Allow moderators and admins to update
                         'roles' => [
@@ -51,7 +51,7 @@ class AgentsController extends Controller {
                         ],
                     ],
                     [
-                        'actions' => ['delete', 'index', 'create', 'update', 'delete', 'view'],
+                        'actions' => ['delete', 'index', 'create', 'update', 'delete', 'view', 'comment', 'delcomment'],
                         'allow' => true,
                         // Allow admins to delete
                         'roles' => [
@@ -210,7 +210,7 @@ class AgentsController extends Controller {
                     ->where(['id_user' => $model->id])
                     ->andWhere(['id_system' => 1])
                     ->one();
-            if (!$MeraUsersAccessControl->id) {
+            if (!isset($MeraUsersAccessControl->id) || !$MeraUsersAccessControl->id) {
                 $MeraUsersAccessControl = new MeraUsersAccessControl;
             }
 
@@ -219,13 +219,13 @@ class AgentsController extends Controller {
                     ->where(['id_user' => $model->id])
                     ->andWhere(['id_system' => 2])
                     ->one();
-            if (!$MeraUsersAccessControl2->id) {
+            if (!isset($MeraUsersAccessControl2->id) || !$MeraUsersAccessControl2->id) {
                 $MeraUsersAccessControl2 = new MeraUsersAccessControl;
             }
             $Sagent = Sagent::find()
                     ->where(['id_user' => $model->id])
                     ->one();
-            if (!$Sagent->id)
+            if (!isset($Sagent->id) || !$Sagent->id)
                 $Sagent = new Sagent;
 
 
@@ -273,7 +273,7 @@ class AgentsController extends Controller {
         }
         $id_agent = (int) strip_tags($_POST['id_agent']);
         $text = strip_tags($_POST['text']);
-        if(!$id_agent || !$text){
+        if (!$id_agent || !$text) {
             echo 2; // bad
             exit();
         }
@@ -282,13 +282,42 @@ class AgentsController extends Controller {
         $model->id_agent = $id_agent;
         $model->id_user = $UserInfo->id;
         $model->comment = $text;
-        if($model->save()){
-            echo 1; // ok
+        if ($model->save()) {
+            echo $model->id; // ok
+            exit();
+        } else {
+            echo 2; // bad
+            exit();
+        }
+    }
+    
+    public function actionDelcomment(){
+        if (!Yii::$app->request->isAjax) {
+            echo 2; // bad
+            exit();
+        }
+        $id = (int) strip_tags($_POST['id']);
+        if (!$id) {
+            echo 2; // bad
+            exit();
+        }
+        $UserInfo = Yii::$app->user->identity;
+        $ManagerComment = ManagerComments::find()
+                ->where(['id'=>$id])
+                ->andWhere(['id_user'=>$UserInfo->id])
+                ->one();
+        if(!isset($ManagerComment) || !$ManagerComment->id){
+            echo 2; // bad
+            exit();
+        }
+        if($ManagerComment->delete()){
+            echo 1;
             exit();
         }else{
             echo 2; // bad
             exit();
         }
+        
     }
 
     /**

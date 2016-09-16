@@ -92,7 +92,7 @@ use common\models\MeraDomains;
 
         <?php ActiveForm::end(); ?>
     </div>
-    <div class="col-md-8 col-xs-12">
+    <div class="col-md-8 col-xs-12 my_comments_task">
         <?php
         Panel::begin([
             'removable' => true,
@@ -166,46 +166,52 @@ use common\models\MeraDomains;
                 </div>
                 <div class="row">
                     <div class="form-group">
-                        <button data-id="<?=$model->id?>" type="button" id="button_text_comment" class="btn my_button_save_comment">Сохранить</button>
+                        <button data-id="<?= $model->id ?>" type="button" id="button_text_comment" class="btn my_button_save_comment">Сохранить</button>
                     </div>
                 </div>
                 <?php Panel::end() ?>
             </div>                
         </div>
-        <?php foreach ($ManagerComments as $mc): ?>
-            <?php
-            Panel::begin([
-                'removable' => true,
-            ])
-            ?>
-            <div class="row">
-                <div class="col-md-10 col-xs-12">
-                    <div class="row">
-                        <div class="col-md-12 col-xs-12">
-                            <span><?= $mc->date_add ?>. </span>
-                            <span>Добавил: <b><i><?=$mc->user->name?>.</i></b></span>
-                            <span>для агента: <b><i><?=$mc->agent->name?></i></b></span>
-                        </div>
-                        <hr/>
+        <div class="row" id="list_comments">
+            <?php foreach ($ManagerComments as $mc): ?>
+                <?php
+                Panel::begin([
+                    'removable' => true,
+                    'options'=>[
+                        'class'=>'x_panel',
+                    ],
+                    'id'=>"w_".$mc->id,
+                ])
+                ?>
+                <div class="row">
+                    <div class="col-md-10 col-xs-12">
                         <div class="row">
                             <div class="col-md-12 col-xs-12">
-                                <?=$mc->comment?>
+                                <span><?= $mc->date_add ?>. </span>
+                                <span>Добавил: <b><i><?= $mc->user->name ?>.</i></b></span>
+                                <span>для агента: <b><i><?= $mc->agent->name ?></i></b></span>
+                            </div>
+                            <hr/>
+                            <div class="row">
+                                <div class="col-md-12 col-xs-12">
+                                    <?= $mc->comment ?>
+                                </div>
                             </div>
                         </div>
                     </div>
+                    <div class="col-md-2 col-xs-12">
+                        <ul id="w13" class="nav navbar-right panel_toolbox" style="min-width:0px;">
+                            <!--                        <li>
+                                                        <a class="update-link"><i class="fa fa-edit"></i></a>
+                                                    </li>-->
+                            <li>                        
+                                <a onclick="my_close(<?= $mc->id ?>)" data-id="<?= $mc->id ?>" class="close-link"><i class="fa fa-close"></i></a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
-                <div class="col-md-2 col-xs-12">
-                    <ul id="w13" class="nav navbar-right panel_toolbox" style="min-width:0px;">
-<!--                        <li>
-                            <a class="update-link"><i class="fa fa-edit"></i></a>
-                        </li>-->
-                        <li>                        
-                            <a data-id="<?=$mc->id?>" class="close-link"><i class="fa fa-close"></i></a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <?php Panel::end() ?>
-        <?php endforeach; ?>
+                <?php Panel::end() ?>
+            <?php endforeach; ?>
+        </div>
     </div>
 </div>
