@@ -22,6 +22,8 @@ $this->params['breadcrumbs'][] = 'Update';
         'MeraUsersAccessControl' => $MeraUsersAccessControl,
         'MeraUsersAccessControl2' => $MeraUsersAccessControl2,
         'Sagent' => $Sagent,
+        'UserInfo'=>$UserInfo,
+        'ManagerComments'=>$ManagerComments,
     ])
     ?>
 

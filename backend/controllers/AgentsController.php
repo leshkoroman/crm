@@ -15,6 +15,7 @@ use common\models\TarifOrder;
 use common\models\MeraTarif;
 use common\models\MeraUsersAccessControl;
 use common\models\Sagent;
+use common\models\ManagerComments;
 
 /**
  * AgentsController implements the CRUD actions for Agents model.
@@ -29,10 +30,10 @@ class AgentsController extends Controller {
                 'ruleConfig' => [
                     'class' => AccessRule::className(),
                 ],
-                'only' => ['index', 'create', 'update', 'delete', 'view'],
+                'only' => ['index', 'create', 'update', 'delete', 'view', 'comment'],
                 'rules' => [
                     [
-                        'actions' => ['index', 'create', 'update', 'view'],
+                        'actions' => ['index', 'create', 'update', 'comment'],
                         'allow' => true,
                         // Allow users, moderators and admins to create
                         'roles' => [
@@ -245,6 +246,10 @@ class AgentsController extends Controller {
 //                exit;
                 return $this->redirect(['/agents']);
             } else {
+                $ManagerComments = ManagerComments::find()
+                        ->where(['id_user' => $UserInfo->id, 'id_agent' => $model->id])
+                        ->orderBy('date_add DESC')
+                        ->all();
                 return $this->render('update', [
                             'model' => $model,
                             'tarif' => $tarif,
@@ -252,10 +257,37 @@ class AgentsController extends Controller {
                             'MeraUsersAccessControl' => $MeraUsersAccessControl,
                             'MeraUsersAccessControl2' => $MeraUsersAccessControl2,
                             'Sagent' => $Sagent,
+                            'UserInfo' => $UserInfo,
+                            'ManagerComments' => $ManagerComments,
                 ]);
             }
         } else {
             return $this->redirect(['/agents']);
+        }
+    }
+
+    public function actionComment() {
+        if (!Yii::$app->request->isAjax) {
+            echo 2; // bad
+            exit();
+        }
+        $id_agent = (int) strip_tags($_POST['id_agent']);
+        $text = strip_tags($_POST['text']);
+        if(!$id_agent || !$text){
+            echo 2; // bad
+            exit();
+        }
+        $UserInfo = Yii::$app->user->identity;
+        $model = new ManagerComments;
+        $model->id_agent = $id_agent;
+        $model->id_user = $UserInfo->id;
+        $model->comment = $text;
+        if($model->save()){
+            echo 1; // ok
+            exit();
+        }else{
+            echo 2; // bad
+            exit();
         }
     }
 
@@ -269,7 +301,7 @@ class AgentsController extends Controller {
         $UserInfo = Yii::$app->user->identity;
         if ($model->who_created == $UserInfo->id || $UserInfo->role == "30") {
             $model = $this->findModel($id);
-            MeraUsersAccessControl::deleteAll(['id_user' => $model->id]);                    
+            MeraUsersAccessControl::deleteAll(['id_user' => $model->id]);
             Sagent::deleteAll(['id_user' => $model->id]);
             $model->delete();
         }

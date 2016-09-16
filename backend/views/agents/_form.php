@@ -136,7 +136,7 @@ use common\models\MeraDomains;
                 <div class="bs-glyphicons">
                     <ul class="bs-glyphicons-list my-bs-glyphicons-list">
                         <li>
-                            <span title="Добавить примечание" class="glyphicon glyphicon-align-justify" aria-hidden="true"></span>
+                            <span title="Добавить примечание" id="add_comment" class="glyphicon glyphicon-align-justify" aria-hidden="true"></span>
                             <!--<span class="glyphicon-class">glyphicon glyphicon-time</span>-->
                         </li>
                         <li>
@@ -147,7 +147,32 @@ use common\models\MeraDomains;
                 </div>
             </div>
         </div>
-        <?php foreach ([1, 2, 3, 4, 5] as $i): ?>
+        <div class="row comment" id="comment">
+            <div class="col-md-12 col-xs-12">
+                <?php
+                Panel::begin([
+                    'removable' => true,
+                ])
+                ?>
+                <div>
+                    <span>Сегодня</span> <span><?= date('H:i:s', time()) ?>. </span> 
+                    <span>Добавил: <b><i><?= $UserInfo->name ?></i></b>,</span>
+                    <span>для агента: <b><i><?= $model->name ?>.</i></b></span>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <textarea id="text_comment" class="form-control" name="comment" rows="6" style="resize:none"></textarea>                        
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <button data-id="<?=$model->id?>" type="button" id="button_text_comment" class="btn my_button_save_comment">Сохранить</button>
+                    </div>
+                </div>
+                <?php Panel::end() ?>
+            </div>                
+        </div>
+        <?php foreach ($ManagerComments as $mc): ?>
             <?php
             Panel::begin([
                 'removable' => true,
@@ -157,25 +182,25 @@ use common\models\MeraDomains;
                 <div class="col-md-10 col-xs-12">
                     <div class="row">
                         <div class="col-md-12 col-xs-12">
-                            <span><?= date('Y-m-d H:i:s', time()) ?>. </span>
-                            <span>Кто написал примечание.</span>
-                            <span>Кому написно примечание</span>
+                            <span><?= $mc->date_add ?>. </span>
+                            <span>Добавил: <b><i><?=$mc->user->name?>.</i></b></span>
+                            <span>для агента: <b><i><?=$mc->agent->name?></i></b></span>
                         </div>
                         <hr/>
                         <div class="row">
                             <div class="col-md-12 col-xs-12">
-                                ТЕКСТ ТЕКСТ ТЕКСТ ТЕКСТ ТЕКСТ ТЕКСТ ТЕКСТ ТЕКСТ ТЕКСТ ТЕКСТ ТЕКСТ ТЕКСТ ТЕКСТ ТЕКСТ ТЕКСТ ТЕКСТ ТЕКСТ ТЕКСТ ТЕКСТ ТЕКСТ ТЕКСТ ТЕКСТ ТЕКСТ ТЕКСТ ТЕКСТ ТЕКСТ ТЕКСТ ТЕКСТ ТЕКСТ ТЕКСТ ТЕКСТ ТЕКСТ 
+                                <?=$mc->comment?>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-2 col-xs-12">
                     <ul id="w13" class="nav navbar-right panel_toolbox" style="min-width:0px;">
-                        <li>
+<!--                        <li>
                             <a class="update-link"><i class="fa fa-edit"></i></a>
-                        </li>
+                        </li>-->
                         <li>                        
-                            <a class="close-link"><i class="fa fa-close"></i></a>
+                            <a data-id="<?=$mc->id?>" class="close-link"><i class="fa fa-close"></i></a>
                         </li>
                     </ul>
                 </div>

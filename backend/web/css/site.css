@@ -129,5 +129,23 @@ a.desc:after {
 }
 
 .my-panel-heder{
-    
+
+}
+.my_button_save_comment{
+    background: linear-gradient(to bottom,#fdfdfd,#fbfbfb);
+    border: 1px solid #dbdedf;
+    /*border-bottom-width: 2px;*/
+    color: #2e3640;
+    opacity: 0.6;
+}
+
+.my_button_save_comment:hover{    
+    border: 1px solid #c7d1d4;
+    /*border-bottom-width: 2px;*/
+    color: #2e3640;
+    opacity: 0.9;
+}
+
+.comment{
+    display: none;
 }
