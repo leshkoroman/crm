@@ -3,7 +3,7 @@
 namespace common\models;
 
 use Yii;
-
+use common\models\TaskTypes;
 /**
  * This is the model class for table "manager_task".
  *
@@ -13,7 +13,7 @@ use Yii;
  * @property integer $status
  * @property integer $id_type_task
  * @property string $date_add
- * @property integer $date_to
+ * @property string $date_to
  * @property string $comment
  */
 class ManagerTask extends \yii\db\ActiveRecord
@@ -32,10 +32,10 @@ class ManagerTask extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id_user', 'id_agent', 'status', 'id_type_task', 'date_to', 'comment'], 'required'],
-            [['id_user', 'id_agent', 'status', 'id_type_task', 'date_to'], 'integer'],
+            [['id_user', 'id_agent', 'status', 'id_type_task', 'comment'], 'required'],
+            [['id_user', 'id_agent', 'status', 'id_type_task'], 'integer'],
             [['date_add'], 'safe'],
-            [['comment'], 'string', 'max' => 255],
+            [['comment','date_to'], 'string', 'max' => 255],
         ];
     }
 
@@ -63,5 +63,9 @@ class ManagerTask extends \yii\db\ActiveRecord
     public static function find()
     {
         return new ManagerTaskQuery(get_called_class());
+    }
+    
+    public function getTasks() {
+        return $this->hasOne(TaskTypes::className(), ['id' => 'id_type_task']);
     }
 }

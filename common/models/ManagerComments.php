@@ -3,7 +3,7 @@
 namespace common\models;
 
 use Yii;
-
+use common\models\TaskTypes;
 /**
  * This is the model class for table "manager_comments".
  *
@@ -12,6 +12,10 @@ use Yii;
  * @property integer $id_agent
  * @property string $comment
  * @property string $date_add
+ * @property integer $from_task
+ * @property string $date_done
+ * @property string $from_task_result
+ * @property integer $id_from_task
  */
 class ManagerComments extends \yii\db\ActiveRecord {
 
@@ -28,9 +32,9 @@ class ManagerComments extends \yii\db\ActiveRecord {
     public function rules() {
         return [
             [['id_user', 'id_agent', 'comment'], 'required'],
-            [['id_user', 'id_agent'], 'integer'],
+            [['id_user', 'id_agent', 'from_task', 'id_from_task'], 'integer'],
             [['date_add'], 'safe'],
-            [['comment'], 'string', 'max' => 255],
+            [['comment','date_done','from_task_result'], 'string', 'max' => 255],
         ];
     }
 
@@ -61,6 +65,10 @@ class ManagerComments extends \yii\db\ActiveRecord {
     
     public function getAgent() {
         return $this->hasOne(Agents::className(), ['id' => 'id_agent']);
+    }
+    
+    public function getTask() {
+        return $this->hasOne(TaskTypes::className(), ['id' => 'id_from_task']);
     }
 
 }

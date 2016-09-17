@@ -24,6 +24,7 @@ $this->params['breadcrumbs'][] = 'Update';
         'Sagent' => $Sagent,
         'UserInfo'=>$UserInfo,
         'ManagerComments'=>$ManagerComments,
+        'ManagerTask'=>$ManagerTask,
     ])
     ?>
 

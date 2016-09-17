@@ -5,6 +5,7 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\helpers\ArrayHelper;
 use common\models\MeraDomains;
+use kartik\date\DatePicker;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Agents */
@@ -93,44 +94,55 @@ use common\models\MeraDomains;
         <?php ActiveForm::end(); ?>
     </div>
     <div class="col-md-8 col-xs-12 my_comments_task">
-        <?php
-        Panel::begin([
-            'removable' => true,
-            'options' => [
-                'class' => 'x_panel',
-                'style' => 'border:solid green',
-            ],
-            'header' => 'Позвонить клиенту',
-            'headerMenu' => [
-                [
-                    'label' => 'дествия 1',
-                    'url' => '#',
+        <?php foreach ($ManagerTask as $mt): ?>
+            <?php
+            Panel::begin([
+                'id' => 'tt_' . $mt->id,
+                //'removable' => true,
+                'options' => [
+                    'class' => 'x_panel',
+                    'style' => (strtotime($mt->date_to) > time()) ? 'border:solid green' : 'border:solid red',
                 ],
-                [
-                    'label' => 'действия 2',
-                    'url' => '#',
-                ],
-            ],
-        ])
-        ?>
-        <div class="row">
-            <div class="col-md-10 col-xs-12">
-                <div class="row">
-                    <div class="col-md-12 col-xs-12">
-                        <span><?= date('Y-m-d H:i:s', time()) ?>. </span>
-                        <span>Кто написал задачу.</span>
-                        <span>Кому написно задачу, по какому вопросу</span>
-                    </div>
-                    <hr/>
+                'header' => $mt->tasks->name . ': исполнить до ' . date('Y-m-d', strtotime($mt->date_to)),
+//            'headerMenu' => [
+//                [
+//                    'label' => 'сделать',
+//                    'url' => '#',
+//                ],
+//                [
+//                    'label' => 'действия 2',
+//                    'url' => '#',
+//                ],
+//            ],
+            ])
+            ?>
+            <input type='hidden' name="ddd" value="<?= $mt->tasks->name ?>" id='hidden_tasks_name<?= $mt->id ?>'>
+            <div class="row">
+                <div class="col-md-12 col-xs-12">
                     <div class="row">
                         <div class="col-md-12 col-xs-12">
-                            ТЕКСТ ТЕКСТ ТЕКСТ ТЕКСТ ТЕКСТ ТЕКСТ ТЕКСТ ТЕКСТ ТЕКСТ ТЕКСТ ТЕКСТ ТЕКСТ ТЕКСТ ТЕКСТ ТЕКСТ ТЕКСТ ТЕКСТ ТЕКСТ ТЕКСТ ТЕКСТ ТЕКСТ ТЕКСТ ТЕКСТ ТЕКСТ ТЕКСТ ТЕКСТ ТЕКСТ ТЕКСТ ТЕКСТ ТЕКСТ ТЕКСТ ТЕКСТ 
+                            <span>Добавил <?= $mt->date_add ?>. </span>
+                            <span><?= $UserInfo->name ?>.</span>
+                            <span>По агенту <?= $model->name ?></span>
+                        </div>
+                        <hr/>
+                        <div class="row">
+                            <div class="col-md-12 col-xs-12" id="task_comment_<?= $mt->id ?>">
+                                <?= $mt->comment ?>
+                            </div>
                         </div>
                     </div>
+                </div>                
+            </div>
+            <div class="row">
+                <div class="form-group" style="margin-bottom: 0px;">
+                    <input type=text" id="text_task_result" class="form-control text_task_result" name="task_result" rows="6" placeholder="Добавить результат" style="resize:none">
+                    <button data-id="<?= $mt->id ?>" type="button" onclick="task_do(<?= $mt->id ?>, $(this))" class="btn my_button_save_comment">Выполнить</button>
                 </div>
             </div>
-        </div>
-        <?php Panel::end() ?>
+            <?php Panel::end() ?>
+        <?php endforeach; ?>
+
         <div class="bs-glyphicons">
             <div class="bs-docs-section">
                 <div class="bs-glyphicons">
@@ -140,7 +152,7 @@ use common\models\MeraDomains;
                             <!--<span class="glyphicon-class">glyphicon glyphicon-time</span>-->
                         </li>
                         <li>
-                            <span title="Добавить задачу" class="glyphicon glyphicon-time" aria-hidden="true"></span>
+                            <span title="Добавить задачу" id="add_task" class="glyphicon glyphicon-time" aria-hidden="true"></span>
                             <!--<span class="glyphicon-class">glyphicon glyphicon-time</span>-->
                         </li>
                     </ul>
@@ -166,7 +178,56 @@ use common\models\MeraDomains;
                 </div>
                 <div class="row">
                     <div class="form-group">
-                        <button data-id="<?= $model->id ?>" type="button" id="button_text_comment" class="btn my_button_save_comment">Сохранить</button>
+                        <button data-id="<?= $model->id ?>" type="button" id="button_text_comment" class="btn btn-primary">Сохранить</button>
+                    </div>
+                </div>
+                <?php Panel::end() ?>
+            </div>                
+        </div>
+        <div class="row task" id="task">
+            <div class="col-md-12 col-xs-12">
+                <?php
+                Panel::begin([
+                    'removable' => true,
+                    'options' => [
+                    'class' => 'x_panel',
+                    'style' => 'border:solid green',
+                ],
+                ])
+                ?>
+                <div class="row">
+                    <div class="col-md-6 col-xs-12">
+                        <div class="form-group">
+                            <?php
+                            echo DatePicker::widget([
+                                'name' => 'task_date',
+                                'value' => '',
+                                'options' => ['placeholder' => 'Введите дату ...', 'id'=>'task_date'],
+                                'pluginOptions' => [
+                                    'format' => 'dd.mm.yyyy',
+                                    'todayHighlight' => true
+                                ]
+                            ]);
+                            ?>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-xs-12">
+                        <div class="form-group">
+                            <?= yii\bootstrap\Html::dropDownList('task_type', null, ArrayHelper::map(\common\models\TaskTypes::find()->all(), 'id', 'name'), ['prompt' => 'Выбрать', 'class' => 'form-control', 'id'=>'task_type']) ?>
+                        </div>                        
+                    </div>
+                    <div class="col-md-12 col-xs-12">
+                        <div class="form-group">
+                            <textarea id="task_text_comment" class="form-control" name="task_comment" rows="5" style="resize:none"></textarea>    
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 col-xs-12">
+                        <div class="form-group">
+                            <button data-id="<?= $model->id ?>" type="button" id="button_text_task" class="btn btn-primary">Сохранить</button>
+                            <button data-id="<?= $model->id ?>" type="button" id="button_text_task_close" class="btn my_button_save_comment">Отмена</button>
+                        </div>
                     </div>
                 </div>
                 <?php Panel::end() ?>
@@ -177,25 +238,32 @@ use common\models\MeraDomains;
                 <?php
                 Panel::begin([
                     'removable' => true,
-                    'options'=>[
-                        'class'=>'x_panel',
+                    'options' => [
+                        'class' => 'x_panel',
                     ],
-                    'id'=>"w_".$mc->id,
+                    'id' => "w_" . $mc->id,
                 ])
                 ?>
                 <div class="row">
                     <div class="col-md-10 col-xs-12">
                         <div class="row">
                             <div class="col-md-12 col-xs-12">
+                                <span class="<?= ($mc->from_task) ? 'task_footer' : 'comment_footer' ?>"><?= ($mc->from_task) ? 'Задача ' : 'Комментарий ' ?></span>
                                 <span><?= $mc->date_add ?>. </span>
                                 <span>Добавил: <b><i><?= $mc->user->name ?>.</i></b></span>
                                 <span>для агента: <b><i><?= $mc->agent->name ?></i></b></span>
                             </div>
                             <hr/>
                             <div class="row">
-                                <div class="col-md-12 col-xs-12">
+                                <div class="col-md-12 col-xs-12 <?= ($mc->from_task) ? 'task_decor' : '' ?>">
                                     <?= $mc->comment ?>
                                 </div>
+                                <?php if ($mc->from_task): ?>
+                                    <hr/>
+                                    <div class="col-md-12 col-xs-12">
+                                        <span>Задача: <b><?= $mc->task->name ?>.</b></span> <span>Результат: <b><?= $mc->from_task_result ?></b></span>
+                                    </div>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>

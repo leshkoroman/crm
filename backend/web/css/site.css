@@ -146,10 +146,22 @@ a.desc:after {
     opacity: 0.9;
 }
 
-.comment{
+.comment,  .task{
     display: none;
 }
 
 .my_comments_task{
     padding-left: 15px;
+}
+
+.task_footer{
+    color:green;
+}
+
+.comment_footer{
+    color:blue;
+}
+.task_decor{
+    text-decoration: line-through;
+
 }
