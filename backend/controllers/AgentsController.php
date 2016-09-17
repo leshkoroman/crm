@@ -333,6 +333,7 @@ class AgentsController extends Controller {
             echo '_2'; // bad
             exit();
         }
+
         $id = (int) strip_tags($_POST['id']);
         if (!$id) {
             echo '_2'; // bad
@@ -352,8 +353,9 @@ class AgentsController extends Controller {
             echo '_2'; // bad
             exit();
         }
+
         $ManagerTask->status = 2;
-        if (!$ManagerTask->save()) {
+        if (!$ManagerTask->save(false)) {
             echo '_2'; // bad
             exit();
         }
